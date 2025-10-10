@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>제목을 적어주세요</title>
+
+    <title>Toss 송금 요청</title>
     <script type="text/javascript" src="qrcode.js"></script>
     <style>
         * {
@@ -76,45 +76,80 @@
 </head>
 <body>
     <div class="container">
+        <!-- The heading is updated dynamically. By default, it shows a generic message. -->
+        <!-- If an amount is passed in the URL, it shows the requested amount. -->
+        <!-- TODO: DEVELOPER - Change "???" to the recipient's name. -->
         <h1>???에게 송금하기</h1>
+
+        <!-- This div is where the QR code will be generated. -->
         <div id="qrcode"></div>
-        <button class="button" onclick="refreshPage()">토스로 송금하기</button>
+
+        <!-- This button triggers the Toss app deep link. -->
+        <button class="button" onclick="triggerTossSend()">토스로 송금하기</button>
+
+        <!-- This section displays the bank and account information. -->
+        <!-- TODO: DEVELOPER - Update your bank name and account number here. -->
         <div class="account-info">
             <strong>은행</strong> 계좌번호
         </div>
+
         <p>토스로 송금하기는 토스 앱에서만 가능합니다.<br>앱이 설치되어 있지 않다면 설치 후 진행해주세요.</p>
     </div>
 
     <script type="text/javascript">
-        const urlParams = new URLSearchParams(window.location.search);
-        const firstParam = window.location.search.substring(1); // '?' 다음에 오는 첫 번째 값을 가져옴
-        const YOUR_AMOUNT_VALUE = firstParam || '0';
+        // --- Configuration ---
+        // TODO: DEVELOPER - In the two lines below, set your bank and account number.
+        // These values are used to generate the Toss deep link.
+        const BANK_NAME = "은행"; // Example: "토스뱅크"
+        const ACCOUNT_NUMBER = "계좌번호"; // Example: "100012345678"
 
+        // --- Main Logic ---
+
+        // Get the payment amount from the URL query string.
+        // For example, for the URL "https://example.com?10000", the amount is "10000".
+        // If no amount is specified, it defaults to '0'.
+        const amount = (window.location.search.substring(1) || '0').split('/')[0];
+
+        // Construct the Toss deep link URL.
+        const tossDeeplink = `supertoss://send?amount=${amount}&bank=${BANK_NAME}&accountNo=${ACCOUNT_NUMBER}`;
+
+        /**
+         * On page load, this script attempts to automatically open the Toss app if an amount is specified.
+         * This provides a seamless experience for users opening the link on a mobile device.
+         */
         window.onload = function() {
-            if (YOUR_AMOUNT_VALUE != '0') {
-                window.location.href = "supertoss://send?amount=" + YOUR_AMOUNT_VALUE + "&bank=은행&accountNo=계좌번호"; // 은행&계좌번호 값 변경
+            // Only redirect if an amount is present in the URL.
+            if (amount !== '0') {
+                window.location.href = tossDeeplink;
             }
         };
 
-
-        if (YOUR_AMOUNT_VALUE!=0) {
-            const formattedAmount = parseInt(YOUR_AMOUNT_VALUE, 10).toLocaleString();
+        // If an amount is specified in the URL, update the main heading to show the requested amount.
+        if (amount !== '0') {
+            const formattedAmount = parseInt(amount, 10).toLocaleString();
             document.querySelector('h1').textContent = `${formattedAmount}원 보내주세요`;
         }
 
-        // QR 코드 생성
+        // Update the account information on the page with the configured values.
+        document.querySelector('.account-info').innerHTML = `<strong>${BANK_NAME}</strong> ${ACCOUNT_NUMBER}`;
+
+        // Generate the QR code using the qrcode.js library.
+        // The QR code contains the Toss deep link, allowing users to scan it to open the payment screen on their phone.
         var qrcode = new QRCode(document.getElementById("qrcode"), {
-            text: "supertoss://send?amount=" + YOUR_AMOUNT_VALUE + "&bank=은행&accountNo=계좌번호", // 은행&계좌번호 값 변경
+            text: tossDeeplink,
             width: 200,
             height: 200,
             colorDark : "#333d4b",
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.H
         });
-    </script>
-    <script>
-        function refreshPage() {
-            window.location.href = "supertoss://send?amount=" + YOUR_AMOUNT_VALUE + "&bank=은행&accountNo=계좌번호"; // 은행&계좌번호 값 변경
+
+        /**
+         * This function is called when the "토스로 송금하기" button is clicked.
+         * It triggers the Toss deep link, which opens the Toss app.
+         */
+        function triggerTossSend() {
+            window.location.href = tossDeeplink;
         }
     </script>
 </body>

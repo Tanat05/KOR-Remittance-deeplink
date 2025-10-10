@@ -1,9 +1,82 @@
-# toss-deeplink
+# Toss Payment Link Generator
 
-https://tanat.kr/donation/
+This project is a simple, client-side web application that generates a Toss payment request page with a QR code. It allows users to easily request payments by sharing a link or a QR code, which opens the Toss app with pre-filled payment details.
 
-![image](https://github.com/user-attachments/assets/8f5a669b-2a0e-4ee1-8742-b612ec54da8f)
+## Features
 
-https://tanat.kr/donation?100000/
+- **Dynamic Amount**: Specify the payment amount directly in the URL.
+- **QR Code Generation**: Automatically generates a QR code for the payment link, making it easy to pay from a mobile device.
+- **Toss App Integration**: Seamlessly opens the Toss app with the recipient's bank, account number, and the requested amount pre-filled.
+- **No Backend Required**: The entire application runs in the browser, making it easy to deploy on any static hosting service.
+- **Customizable**: Easily update the recipient's name, bank, and account number.
 
-![image](https://github.com/user-attachments/assets/b706f63a-60d3-4da9-9013-dc68c71e47cc)
+## How to Use
+
+1.  **To request a payment with a specific amount**:
+    - Append the desired amount to the URL. For example, to request 10,000 KRW, use a link like this:
+      ```
+      https://your-website.com/?10000
+      ```
+2.  **To request a payment without a specific amount**:
+    - Use the base URL without any parameters:
+      ```
+      https://your-website.com/
+      ```
+    - This will generate a QR code, but the user will need to enter the amount manually in the Toss app.
+
+When a user opens the link on a mobile device with the Toss app installed, the app will open directly to the payment screen. If they open it on a desktop, they can scan the QR code with their phone to complete the payment.
+
+## Setup for Developers
+
+This is a client-side application with no build process. To run it locally or deploy it, you can follow these steps:
+
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/your-username/toss-payment-generator.git
+    ```
+2.  **Serve the files**:
+    - You can use any simple HTTP server to serve the `index.html` and `qrcode.js` files. For example, if you have Python installed, you can run:
+      ```bash
+      # For Python 3
+      python -m http.server
+      ```
+    - Or, if you use Node.js, you can install `http-server`:
+      ```bash
+      npm install -g http-server
+      http-server
+      ```
+3.  **Open in your browser**:
+    - Navigate to `http://localhost:8000` (or the port your server is running on) to see the application.
+
+## Customization
+
+To customize the payment page with your own information, you will need to edit the `index.html` file.
+
+1.  **Recipient's Name**:
+    - In `index.html`, find the `<h1>` tag and change `???` to the name of the person or entity receiving the payment.
+      ```html
+      <!-- Before -->
+      <h1>???에게 송금하기</h1>
+
+      <!-- After (Example) -->
+      <h1>Jules에게 송금하기</h1>
+      ```
+
+2.  **Bank and Account Number**:
+    - In the `<script>` section at the bottom of `index.html`, update the `BANK_NAME` and `ACCOUNT_NUMBER` constants with your own bank and account number.
+      ```javascript
+      // --- Configuration ---
+      // TODO: DEVELOPER - In the two lines below, set your bank and account number.
+      // These values are used to generate the Toss deep link.
+      const BANK_NAME = "토스뱅크"; // Change this to your bank name
+      const ACCOUNT_NUMBER = "100012345678"; // Change this to your account number
+      ```
+    - This information will also be displayed on the page and embedded in the QR code.
+
+## Included Library
+
+This project uses a modified version of the [QRCode for Javascript](http://www.d-project.com/qrcode/) library to generate QR codes. The included `qrcode.js` file has been documented for clarity.
+
+## License
+
+This project is open-source and available under the [MIT License](LICENSE).
