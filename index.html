@@ -35,13 +35,43 @@
             margin-bottom: 20px;
         }
         #qrcode {
-            margin: 30px auto;
+            margin: 0 auto 30px auto;
             width: 200px;
             height: 200px;
+            background-color: #f2f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
         }
         #qrcode img {
             max-width: 100%;
             height: auto;
+        }
+        .tabs {
+            display: flex;
+            background-color: #f2f4f6;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            color: #6b7684;
+            transition: all 0.2s ease;
+        }
+        .tab.active-toss {
+            background-color: #3182f6;
+            color: white;
+        }
+        .tab.active-kakao {
+            background-color: #FFEB00;
+            color: #3C1E1E;
         }
         .button-group {
             display: flex;
@@ -66,10 +96,19 @@
         .button-toss {
             background-color: #3182f6;
             color: white;
+            transition: transform 0.2s ease, opacity 0.3s ease;
         }
         .button-kakao {
             background-color: #FFEB00;
             color: #3C1E1E;
+            transition: transform 0.2s ease, opacity 0.3s ease;
+        }
+        .button.highlight {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .button:not(.highlight) {
+            opacity: 0.6;
         }
         p {
             color: #6b7684;
@@ -93,6 +132,12 @@
         <!-- URL에 금액이 포함된 경우 요청된 금액을 표시합니다. -->
         <!-- TODO: 개발자 - "???"를 수취인의 이름으로 변경하세요. -->
         <h1>???에게 송금하기</h1>
+
+        <!-- 탭 UI -->
+        <div class="tabs">
+            <div id="tab-toss" class="tab active-toss" onclick="switchTab('toss')">토스</div>
+            <div id="tab-kakao" class="tab" onclick="switchTab('kakao')">카카오페이</div>
+        </div>
 
         <!-- 이 div에 QR 코드가 생성됩니다. -->
         <div id="qrcode"></div>
@@ -148,16 +193,57 @@
         // 페이지의 계좌 정보를 설정된 값으로 업데이트합니다.
         document.querySelector('.account-info').innerHTML = `<strong>${BANK_NAME}</strong> ${ACCOUNT_NUMBER}`;
 
-        // qrcode.js 라이브러리를 사용하여 QR 코드를 생성합니다.
-        // QR 코드에는 현재 페이지 URL이 포함되어 있어, 스캔 시 이 페이지로 다시 연결됩니다.
-        var qrcode = new QRCode(document.getElementById("qrcode"), {
-            text: window.location.href,
+        // QR 코드 인스턴스 초기화
+        let qrcode = new QRCode(document.getElementById("qrcode"), {
             width: 200,
             height: 200,
             colorDark : "#333d4b",
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.H
         });
+
+        // 현재 활성화된 탭 ('toss' 또는 'kakao')
+        let activeTab = 'toss';
+
+        /**
+         * 선택된 탭에 따라 QR 코드를 업데이트합니다.
+         */
+        function updateQRCode() {
+            const link = activeTab === 'toss' ? tossDeeplink : kakaoDeeplink;
+            qrcode.clear();
+            qrcode.makeCode(link);
+        }
+
+        /**
+         * 탭을 전환합니다.
+         * @param {string} tab - 전환할 탭 ('toss' 또는 'kakao')
+         */
+        function switchTab(tab) {
+            activeTab = tab;
+
+            const tabToss = document.getElementById('tab-toss');
+            const tabKakao = document.getElementById('tab-kakao');
+
+            const btnToss = document.querySelector('.button-toss');
+            const btnKakao = document.querySelector('.button-kakao');
+
+            if (tab === 'toss') {
+                tabToss.className = 'tab active-toss';
+                tabKakao.className = 'tab';
+                btnToss.classList.add('highlight');
+                btnKakao.classList.remove('highlight');
+            } else {
+                tabToss.className = 'tab';
+                tabKakao.className = 'tab active-kakao';
+                btnToss.classList.remove('highlight');
+                btnKakao.classList.add('highlight');
+            }
+
+            updateQRCode();
+        }
+
+        // 초기 UI 상태 설정 (토스 탭 활성화)
+        switchTab('toss');
 
         /**
          * "토스로 송금하기" 버튼을 클릭했을 때 호출됩니다.
