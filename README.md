@@ -1,81 +1,81 @@
-# Payment Link Generator (Toss & Kakao Pay)
+# 송금 링크 생성기 (토스 & 카카오페이)
 
-This project is a simple, client-side web application that generates a payment request page with a QR code. It allows users to easily request payments via Toss or Kakao Pay by sharing a link or a QR code, which opens the respective app with pre-filled payment details.
+이 프로젝트는 QR 코드가 포함된 송금 요청 페이지를 생성하는 간단한 클라이언트 측 웹 애플리케이션입니다. 사용자는 링크나 QR 코드를 공유하여 간편하게 송금을 요청할 수 있으며, 요청을 받은 사람은 원하는 앱(토스 또는 카카오페이)을 선택하여 미리 입력된 송금 정보로 결제를 진행할 수 있습니다.
 
-## Features
+## 주요 기능
 
-- **Dynamic Amount**: Specify the payment amount directly in the URL.
-- **QR Code Generation**: Automatically generates a QR code that points to the payment page, making it easy to share.
-- **Multi-App Support**: Supports both **Toss** and **Kakao Pay** deep links.
-- **No Backend Required**: The entire application runs in the browser, making it easy to deploy on any static hosting service.
-- **Customizable**: Easily update the recipient's name, bank, and account number.
+- **동적 금액 설정**: URL에 금액을 직접 지정할 수 있습니다.
+- **QR 코드 생성**: 송금 페이지로 연결되는 QR 코드를 자동으로 생성하여 공유하기 쉽습니다.
+- **멀티 앱 지원**: **토스**와 **카카오페이** 딥링크를 모두 지원합니다.
+- **백엔드 불필요**: 전체 애플리케이션이 브라우저에서 실행되므로 정적 호스팅 서비스에 쉽게 배포할 수 있습니다.
+- **사용자 맞춤 설정**: 수취인 이름, 은행, 계좌 번호를 쉽게 업데이트할 수 있습니다.
 
-## How to Use
+## 사용 방법
 
-1.  **To request a payment with a specific amount**:
-    - Append the desired amount to the URL. For example, to request 10,000 KRW, use a link like this:
+1.  **특정 금액으로 송금을 요청하는 경우**:
+    - URL 뒤에 원하는 금액을 추가합니다. 예를 들어 10,000원을 요청하려면 다음과 같은 링크를 사용합니다.
       ```
       https://your-website.com/?10000
       ```
-2.  **To request a payment without a specific amount**:
-    - Use the base URL without any parameters:
+2.  **금액 지정 없이 송금을 요청하는 경우**:
+    - 파라미터 없이 기본 URL을 사용합니다.
       ```
       https://your-website.com/
       ```
 
-When a user opens the link on a mobile device, they can choose to pay via Toss or Kakao Pay. If they open it on a desktop, they can scan the QR code with their phone to open the page and then select their preferred payment app.
+모바일 기기에서 링크를 열면 토스나 카카오페이 중 원하는 앱을 선택하여 송금할 수 있습니다. 데스크톱에서 열 경우, 휴대폰으로 QR 코드를 스캔하여 페이지를 연 다음 선호하는 송금 앱을 선택하면 됩니다.
 
-## Setup for Developers
+## 개발자 설정
 
-This is a client-side application with no build process. To run it locally or deploy it, you can follow these steps:
+이 프로젝트는 빌드 과정이 없는 클라이언트 측 애플리케이션입니다. 로컬에서 실행하거나 배포하려면 다음 단계를 따르세요.
 
-1.  **Clone the repository**:
+1.  **저장소 복제**:
     ```bash
     git clone https://github.com/your-username/toss-payment-generator.git
     ```
-2.  **Serve the files**:
-    - You can use any simple HTTP server to serve the `index.html` and `qrcode.js` files. For example, if you have Python installed, you can run:
+2.  **파일 서빙**:
+    - 간단한 HTTP 서버를 사용하여 `index.html`과 `qrcode.js` 파일을 서빙할 수 있습니다. 예를 들어 Python이 설치되어 있다면 다음과 같이 실행할 수 있습니다.
       ```bash
-      # For Python 3
+      # Python 3의 경우
       python -m http.server
       ```
-    - Or, if you use Node.js, you can install `http-server`:
+    - 또는 Node.js를 사용하는 경우 `http-server`를 설치할 수 있습니다.
       ```bash
       npm install -g http-server
       http-server
       ```
-3.  **Open in your browser**:
-    - Navigate to `http://localhost:8000` (or the port your server is running on) to see the application.
+3.  **브라우저에서 열기**:
+    - 서버가 실행 중인 주소(예: `http(s)://localhost:8000`)로 이동하여 애플리케이션을 확인합니다.
 
-## Customization
+## 맞춤 설정 (커스터마이징)
 
-To customize the payment page with your own information, you will need to edit the `index.html` file.
+본인의 정보로 송금 페이지를 설정하려면 `index.html` 파일을 수정해야 합니다.
 
-1.  **Recipient's Name**:
-    - In `index.html`, find the `<h1>` tag and change `???` to the name of the person or entity receiving the payment.
+1.  **수취인 이름**:
+    - `index.html`에서 `<h1>` 태그를 찾아 `???`를 송금을 받을 사람 또는 단체의 이름으로 변경하세요.
       ```html
-      <!-- Before -->
+      <!-- 변경 전 -->
       <h1>???에게 송금하기</h1>
 
-      <!-- After (Example) -->
+      <!-- 변경 후 (예시) -->
       <h1>Jules에게 송금하기</h1>
       ```
 
-2.  **Bank and Account Information**:
-    - In the `<script>` section at the bottom of `index.html`, update the `BANK_NAME`, `ACCOUNT_NUMBER`, and `BANK_CODE` constants with your own information.
+2.  **은행 및 계좌 정보**:
+    - `index.html` 하단의 `<script>` 섹션에서 `BANK_NAME`, `ACCOUNT_NUMBER`, `BANK_CODE` 상수를 본인의 정보로 업데이트하세요.
       ```javascript
-      // --- Configuration ---
-      // TODO: DEVELOPER - Set your bank name, account number, and bank code.
-      const BANK_NAME = "토스뱅크"; // Change this to your bank name
-      const ACCOUNT_NUMBER = "100012345678"; // Change this to your account number
-      const BANK_CODE = "092"; // Change this to your bank's 3-digit code
+      // --- 설정 ---
+      // TODO: 개발자 - 아래 세 줄에 본인의 은행 이름, 계좌 번호, 은행 코드를 설정하세요.
+      const BANK_NAME = "토스뱅크"; // 은행 이름으로 변경
+      const ACCOUNT_NUMBER = "100012345678"; // 계좌 번호로 변경
+      const BANK_CODE = "092"; // 은행의 3자리 코드로 변경
       ```
-    - The `BANK_CODE` is required for Kakao Pay support. Common codes (like 092 for Toss Bank, 090 for Kakao Bank) are listed in the comments of `index.html`.
+    - `BANK_CODE`는 카카오페이 지원을 위해 필요합니다. 주요 은행 코드(예: 토스뱅크 092, 카카오뱅크 090)는 `index.html` 내의 주석에 목록으로 제공됩니다.
 
-## Included Library
+## 포함된 라이브러리
 
-This project uses a modified version of the [QRCode for Javascript](http://www.d-project.com/qrcode/) library to generate QR codes. The included `qrcode.js` file has been documented for clarity.
+이 프로젝트는 QR 코드를 생성하기 위해 [QRCode for Javascript](http://www.d-project.com/qrcode/) 라이브러리의 수정된 버전을 사용합니다. 포함된 `qrcode.js` 파일에는 설명을 위해 주석이 추가되어 있습니다.
 
-## License
+## 라이선스
 
-This project is open-source and available under the [MIT License](LICENSE).
+이 프로젝트는 오픈 소스이며 [MIT 라이선스](LICENSE)에 따라 사용할 수 있습니다.

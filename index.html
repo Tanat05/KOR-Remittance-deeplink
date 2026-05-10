@@ -89,22 +89,22 @@
 </head>
 <body>
     <div class="container">
-        <!-- The heading is updated dynamically. By default, it shows a generic message. -->
-        <!-- If an amount is passed in the URL, it shows the requested amount. -->
-        <!-- TODO: DEVELOPER - Change "???" to the recipient's name. -->
+        <!-- 제목은 동적으로 업데이트됩니다. 기본적으로 일반적인 메시지를 표시합니다. -->
+        <!-- URL에 금액이 포함된 경우 요청된 금액을 표시합니다. -->
+        <!-- TODO: 개발자 - "???"를 수취인의 이름으로 변경하세요. -->
         <h1>???에게 송금하기</h1>
 
-        <!-- This div is where the QR code will be generated. -->
+        <!-- 이 div에 QR 코드가 생성됩니다. -->
         <div id="qrcode"></div>
 
-        <!-- These buttons trigger the app deep links. -->
+        <!-- 이 버튼들은 앱 딥링크를 실행합니다. -->
         <div class="button-group">
             <button class="button button-toss" onclick="triggerTossSend()">토스로 송금하기</button>
             <button class="button button-kakao" onclick="triggerKakaoSend()">카카오페이로 송금하기</button>
         </div>
 
-        <!-- This section displays the bank and account information. -->
-        <!-- TODO: DEVELOPER - Update your bank name and account number here. -->
+        <!-- 이 섹션에는 은행 및 계좌 정보가 표시됩니다. -->
+        <!-- TODO: 개발자 - 본인의 은행 이름과 계좌 번호로 업데이트하세요. -->
         <div class="account-info">
             <strong>은행</strong> 계좌번호
         </div>
@@ -113,43 +113,43 @@
     </div>
 
     <script type="text/javascript">
-        // --- Configuration ---
-        // TODO: DEVELOPER - Set your bank name, account number, and bank code.
-        // These values are used to generate the Toss and Kakao Pay deep links.
-        const BANK_NAME = "은행"; // Example: "토스뱅크"
-        const ACCOUNT_NUMBER = "계좌번호"; // Example: "100012345678"
-        const BANK_CODE = "000"; // Example: "092" for Toss Bank. See below for common codes.
+        // --- 설정 ---
+        // TODO: 개발자 - 아래에 은행 이름, 계좌 번호, 은행 코드를 설정하세요.
+        // 이 값들은 토스 및 카카오페이 딥링크를 생성하는 데 사용됩니다.
+        const BANK_NAME = "은행"; // 예: "토스뱅크"
+        const ACCOUNT_NUMBER = "계좌번호"; // 예: "100012345678"
+        const BANK_CODE = "000"; // 예: 토스뱅크의 경우 "092". 아래 공통 코드 목록을 참조하세요.
 
         /*
-        Common Bank Codes:
+        주요 은행 코드:
         - 산업은행: 002, 기업은행: 003, 국민은행: 004, 수협은행: 007, 농협은행: 011, 우리은행: 020,
         - SC제일은행: 023, 씨티은행: 027, 대구은행: 031, 부산은행: 032, 광주은행: 034, 제주은행: 035,
         - 전북은행: 037, 경남은행: 039, 하나은행: 081, 신한은행: 088, 케이뱅크: 089, 카카오뱅크: 090,
         - 토스뱅크: 092, 새마을금고: 045, 신협: 048, 우체국: 071
         */
 
-        // --- Main Logic ---
+        // --- 주요 로직 ---
 
-        // Get the payment amount from the URL query string.
+        // URL 쿼리 스트링에서 송금 금액을 가져옵니다.
         const amount = (window.location.search.substring(1) || '0').split('/')[0];
 
-        // Construct the Toss deep link URL.
+        // 토스 딥링크 URL을 구성합니다.
         const tossDeeplink = `supertoss://send?amount=${amount}&bank=${BANK_NAME}&accountNo=${ACCOUNT_NUMBER}`;
 
-        // Construct the Kakao Pay deep link URL.
+        // 카카오페이 딥링크 URL을 구성합니다.
         const kakaoDeeplink = `kakaotalk://kakaopay/money/to/bank?bank_code=${BANK_CODE}&bank_account_number=${ACCOUNT_NUMBER}&amount=${amount}`;
 
-        // If an amount is specified in the URL, update the main heading to show the requested amount.
+        // URL에 금액이 지정된 경우, 메인 제목을 요청 금액으로 업데이트합니다.
         if (amount !== '0') {
             const formattedAmount = parseInt(amount, 10).toLocaleString();
             document.querySelector('h1').textContent = `${formattedAmount}원 보내주세요`;
         }
 
-        // Update the account information on the page with the configured values.
+        // 페이지의 계좌 정보를 설정된 값으로 업데이트합니다.
         document.querySelector('.account-info').innerHTML = `<strong>${BANK_NAME}</strong> ${ACCOUNT_NUMBER}`;
 
-        // Generate the QR code using the qrcode.js library.
-        // The QR code contains the current page URL, so scanning it leads back here.
+        // qrcode.js 라이브러리를 사용하여 QR 코드를 생성합니다.
+        // QR 코드에는 현재 페이지 URL이 포함되어 있어, 스캔 시 이 페이지로 다시 연결됩니다.
         var qrcode = new QRCode(document.getElementById("qrcode"), {
             text: window.location.href,
             width: 200,
@@ -160,16 +160,16 @@
         });
 
         /**
-         * This function is called when the "토스로 송금하기" button is clicked.
-         * It triggers the Toss deep link, which opens the Toss app.
+         * "토스로 송금하기" 버튼을 클릭했을 때 호출됩니다.
+         * 토스 앱을 여는 딥링크를 실행합니다.
          */
         function triggerTossSend() {
             window.location.href = tossDeeplink;
         }
 
         /**
-         * This function is called when the "카카오페이로 송금하기" button is clicked.
-         * It triggers the Kakao Pay deep link, which opens the KakaoTalk app.
+         * "카카오페이로 송금하기" 버튼을 클릭했을 때 호출됩니다.
+         * 카카오톡 앱을 여는 카카오페이 딥링크를 실행합니다.
          */
         function triggerKakaoSend() {
             window.location.href = kakaoDeeplink;
