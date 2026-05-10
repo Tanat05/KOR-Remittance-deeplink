@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Toss 송금 요청</title>
+    <title>송금 요청</title>
     <script type="text/javascript" src="qrcode.js"></script>
     <style>
         * {
@@ -43,9 +43,12 @@
             max-width: 100%;
             height: auto;
         }
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
         .button {
-            background-color: #3182f6;
-            color: white;
             border: none;
             border-radius: 10px;
             padding: 15px 0;
@@ -53,10 +56,20 @@
             font-weight: bold;
             width: 100%;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: opacity 0.3s ease;
+            text-decoration: none;
+            display: block;
         }
         .button:hover {
-            background-color: #1c6fef;
+            opacity: 0.9;
+        }
+        .button-toss {
+            background-color: #3182f6;
+            color: white;
+        }
+        .button-kakao {
+            background-color: #FFEB00;
+            color: #3C1E1E;
         }
         p {
             color: #6b7684;
@@ -84,8 +97,11 @@
         <!-- This div is where the QR code will be generated. -->
         <div id="qrcode"></div>
 
-        <!-- This button triggers the Toss app deep link. -->
-        <button class="button" onclick="triggerTossSend()">토스로 송금하기</button>
+        <!-- These buttons trigger the app deep links. -->
+        <div class="button-group">
+            <button class="button button-toss" onclick="triggerTossSend()">토스로 송금하기</button>
+            <button class="button button-kakao" onclick="triggerKakaoSend()">카카오페이로 송금하기</button>
+        </div>
 
         <!-- This section displays the bank and account information. -->
         <!-- TODO: DEVELOPER - Update your bank name and account number here. -->
@@ -93,36 +109,35 @@
             <strong>은행</strong> 계좌번호
         </div>
 
-        <p>토스로 송금하기는 토스 앱에서만 가능합니다.<br>앱이 설치되어 있지 않다면 설치 후 진행해주세요.</p>
+        <p>송금하기는 각 앱이 설치되어 있어야 가능합니다.<br>앱이 설치되어 있지 않다면 설치 후 진행해주세요.</p>
     </div>
 
     <script type="text/javascript">
         // --- Configuration ---
-        // TODO: DEVELOPER - In the two lines below, set your bank and account number.
-        // These values are used to generate the Toss deep link.
+        // TODO: DEVELOPER - Set your bank name, account number, and bank code.
+        // These values are used to generate the Toss and Kakao Pay deep links.
         const BANK_NAME = "은행"; // Example: "토스뱅크"
         const ACCOUNT_NUMBER = "계좌번호"; // Example: "100012345678"
+        const BANK_CODE = "000"; // Example: "092" for Toss Bank. See below for common codes.
+
+        /*
+        Common Bank Codes:
+        - 산업은행: 002, 기업은행: 003, 국민은행: 004, 수협은행: 007, 농협은행: 011, 우리은행: 020,
+        - SC제일은행: 023, 씨티은행: 027, 대구은행: 031, 부산은행: 032, 광주은행: 034, 제주은행: 035,
+        - 전북은행: 037, 경남은행: 039, 하나은행: 081, 신한은행: 088, 케이뱅크: 089, 카카오뱅크: 090,
+        - 토스뱅크: 092, 새마을금고: 045, 신협: 048, 우체국: 071
+        */
 
         // --- Main Logic ---
 
         // Get the payment amount from the URL query string.
-        // For example, for the URL "https://example.com?10000", the amount is "10000".
-        // If no amount is specified, it defaults to '0'.
         const amount = (window.location.search.substring(1) || '0').split('/')[0];
 
         // Construct the Toss deep link URL.
         const tossDeeplink = `supertoss://send?amount=${amount}&bank=${BANK_NAME}&accountNo=${ACCOUNT_NUMBER}`;
 
-        /**
-         * On page load, this script attempts to automatically open the Toss app if an amount is specified.
-         * This provides a seamless experience for users opening the link on a mobile device.
-         */
-        window.onload = function() {
-            // Only redirect if an amount is present in the URL.
-            if (amount !== '0') {
-                window.location.href = tossDeeplink;
-            }
-        };
+        // Construct the Kakao Pay deep link URL.
+        const kakaoDeeplink = `kakaotalk://kakaopay/money/to/bank?bank_code=${BANK_CODE}&bank_account_number=${ACCOUNT_NUMBER}&amount=${amount}`;
 
         // If an amount is specified in the URL, update the main heading to show the requested amount.
         if (amount !== '0') {
@@ -134,9 +149,9 @@
         document.querySelector('.account-info').innerHTML = `<strong>${BANK_NAME}</strong> ${ACCOUNT_NUMBER}`;
 
         // Generate the QR code using the qrcode.js library.
-        // The QR code contains the Toss deep link, allowing users to scan it to open the payment screen on their phone.
+        // The QR code contains the current page URL, so scanning it leads back here.
         var qrcode = new QRCode(document.getElementById("qrcode"), {
-            text: tossDeeplink,
+            text: window.location.href,
             width: 200,
             height: 200,
             colorDark : "#333d4b",
@@ -150,6 +165,14 @@
          */
         function triggerTossSend() {
             window.location.href = tossDeeplink;
+        }
+
+        /**
+         * This function is called when the "카카오페이로 송금하기" button is clicked.
+         * It triggers the Kakao Pay deep link, which opens the KakaoTalk app.
+         */
+        function triggerKakaoSend() {
+            window.location.href = kakaoDeeplink;
         }
     </script>
 </body>
