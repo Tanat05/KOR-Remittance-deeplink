@@ -1,12 +1,12 @@
-# Toss Payment Link Generator
+# Payment Link Generator (Toss & Kakao Pay)
 
-This project is a simple, client-side web application that generates a Toss payment request page with a QR code. It allows users to easily request payments by sharing a link or a QR code, which opens the Toss app with pre-filled payment details.
+This project is a simple, client-side web application that generates a payment request page with a QR code. It allows users to easily request payments via Toss or Kakao Pay by sharing a link or a QR code, which opens the respective app with pre-filled payment details.
 
 ## Features
 
 - **Dynamic Amount**: Specify the payment amount directly in the URL.
-- **QR Code Generation**: Automatically generates a QR code for the payment link, making it easy to pay from a mobile device.
-- **Toss App Integration**: Seamlessly opens the Toss app with the recipient's bank, account number, and the requested amount pre-filled.
+- **QR Code Generation**: Automatically generates a QR code that points to the payment page, making it easy to share.
+- **Multi-App Support**: Supports both **Toss** and **Kakao Pay** deep links.
 - **No Backend Required**: The entire application runs in the browser, making it easy to deploy on any static hosting service.
 - **Customizable**: Easily update the recipient's name, bank, and account number.
 
@@ -22,9 +22,8 @@ This project is a simple, client-side web application that generates a Toss paym
       ```
       https://your-website.com/
       ```
-    - This will generate a QR code, but the user will need to enter the amount manually in the Toss app.
 
-When a user opens the link on a mobile device with the Toss app installed, the app will open directly to the payment screen. If they open it on a desktop, they can scan the QR code with their phone to complete the payment.
+When a user opens the link on a mobile device, they can choose to pay via Toss or Kakao Pay. If they open it on a desktop, they can scan the QR code with their phone to open the page and then select their preferred payment app.
 
 ## Setup for Developers
 
@@ -62,16 +61,16 @@ To customize the payment page with your own information, you will need to edit t
       <h1>Jules에게 송금하기</h1>
       ```
 
-2.  **Bank and Account Number**:
-    - In the `<script>` section at the bottom of `index.html`, update the `BANK_NAME` and `ACCOUNT_NUMBER` constants with your own bank and account number.
+2.  **Bank and Account Information**:
+    - In the `<script>` section at the bottom of `index.html`, update the `BANK_NAME`, `ACCOUNT_NUMBER`, and `BANK_CODE` constants with your own information.
       ```javascript
       // --- Configuration ---
-      // TODO: DEVELOPER - In the two lines below, set your bank and account number.
-      // These values are used to generate the Toss deep link.
+      // TODO: DEVELOPER - Set your bank name, account number, and bank code.
       const BANK_NAME = "토스뱅크"; // Change this to your bank name
       const ACCOUNT_NUMBER = "100012345678"; // Change this to your account number
+      const BANK_CODE = "092"; // Change this to your bank's 3-digit code
       ```
-    - This information will also be displayed on the page and embedded in the QR code.
+    - The `BANK_CODE` is required for Kakao Pay support. Common codes (like 092 for Toss Bank, 090 for Kakao Bank) are listed in the comments of `index.html`.
 
 ## Included Library
 
