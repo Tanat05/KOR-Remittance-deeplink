@@ -262,8 +262,41 @@
 
         // --- 주요 로직 ---
 
-        // URL 쿼리 스트링에서 송금 금액을 가져옵니다.
-        const amount = (window.location.search.substring(1) || '0').split('/')[0];
+        /**
+         * URL에서 송금 금액을 추출합니다.
+         * 다양한 형식(?35900, ?amount=35900, ?35900&fbclid=...)을 지원합니다.
+         * @returns {string} 추출된 금액 숫자 문자열
+         */
+        function getAmount() {
+            const search = window.location.search;
+            const params = new URLSearchParams(search);
+
+            // 1. 'amount' 파라미터 확인 (예: ?amount=10000)
+            if (params.has('amount')) {
+                const amt = params.get('amount').replace(/[^0-9]/g, '');
+                if (amt) return amt;
+            }
+
+            // 2. 키 자체가 숫자인 경우 확인 (예: ?10000 또는 ?10000&fbclid=...)
+            // 인스타그램 등에서 추가 파라미터를 붙여도 작동하도록 합니다.
+            for (const key of params.keys()) {
+                if (/^\d+$/.test(key)) {
+                    return key;
+                }
+            }
+
+            // 3. URL 경로에서 숫자 추출 시도 (예: /35900)
+            const pathParts = window.location.pathname.split('/');
+            for (let i = pathParts.length - 1; i >= 0; i--) {
+                if (/^\d+$/.test(pathParts[i])) {
+                    return pathParts[i];
+                }
+            }
+
+            return '0';
+        }
+
+        const amount = getAmount();
 
         // 토스 딥링크 URL을 구성합니다.
         const tossDeeplink = `supertoss://send?amount=${amount}&bank=${BANK_NAME}&accountNo=${ACCOUNT_NUMBER}`;
